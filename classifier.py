@@ -2,7 +2,8 @@ import json
 import os.path
 import shutil
 
-from sklearn.model_selection import train_test_split
+import pickle
+
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
@@ -73,3 +74,8 @@ if __name__ == '__main__':
             shutil.copy(error, f'errors/{correct}_{j}_{i}.jpg')
 
     print("Mean score:", np.mean(scores))
+
+    y = [i.split('-')[0] for i in y]
+    svc_clf = SVC(C=0.5, random_state=0).fit(X, y)
+    with open("svc_clf.pkl", "wb") as f:
+        pickle.dump(svc_clf, f)
