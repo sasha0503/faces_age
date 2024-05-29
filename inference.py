@@ -4,7 +4,6 @@ import numpy as np
 from deepface import DeepFace
 
 if __name__ == '__main__':
-    feature_extractore = DeepFace.build_model("VGG-Face")
     classifier = pickle.load(open("svc_clf.pkl", "rb"))
 
     img = "sdxl-faces/imgs/00000000.png"
