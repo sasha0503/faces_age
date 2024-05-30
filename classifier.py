@@ -44,6 +44,7 @@ if __name__ == '__main__':
 
     chunk_size = len(X) // 10
     scores = []
+    f1_scores = []
     for i in range(10):
         print(f"Fold {i}")
         X_train = np.concatenate([X[:i * chunk_size], X[(i + 1) * chunk_size:]])
@@ -61,6 +62,15 @@ if __name__ == '__main__':
 
         scores.append(accuracy_score(simple_y_test, res))
 
+        # calculate f1 score
+        tp = sum([1 for i in range(len(simple_y_test)) if simple_y_test[i] and res[i]])
+        fp = sum([1 for i in range(len(simple_y_test)) if not simple_y_test[i] and res[i]])
+        fn = sum([1 for i in range(len(simple_y_test)) if simple_y_test[i] and not res[i]])
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+        f1 = 2 * precision * recall / (precision + recall)
+        f1_scores.append(f1)
+
         error_idx = []
         for j, error in enumerate(simple_y_test):
             if res[j] != error:
@@ -73,7 +83,8 @@ if __name__ == '__main__':
             correct = 'adult' if not simple_y_test[idx] else "child"
             shutil.copy(error, f'errors/{correct}_{j}_{i}.jpg')
 
-    print("Mean score:", np.mean(scores))
+    print("Mean accuracy:", np.mean(scores))
+    print("Mean f1 score:", np.mean(f1_scores))
 
     y = [i.split('-')[0] for i in y]
     svc_clf = SVC(C=0.5, random_state=0).fit(X, y)
